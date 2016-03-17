@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">LongOpsBackgroundApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="timePrompt">Wybierz czas trwania operacji.</string>
+    <string-array name="operationTimeArray">
+        <item>10 sekund</item>
+        <item>15 sekund</item>
+        <item>20 sekund</item>
+        <item>25 sekund</item>
+        <item>Zdefiniuj własny czas...</item>
+    </string-array>
+    <string name="startButtonText">Start</string>
+</resources>

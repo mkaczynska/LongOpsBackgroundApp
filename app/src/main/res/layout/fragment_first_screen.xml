@@ -10,13 +10,17 @@
     <Spinner
         android:id="@+id/spinnerId"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:prompt="@string/timePrompt"
         />
     <Button
         android:id="@+id/buttonStartId"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="@string/startButtonText"/>
+        android:text="@string/startButtonText"
+        android:layout_gravity="center"
+        />
 
 </LinearLayout>
+
+<!--//        android:onClick="startOperationService"-->

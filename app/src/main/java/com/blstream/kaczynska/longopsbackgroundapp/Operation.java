@@ -1,19 +1,37 @@
 package com.blstream.kaczynska.longopsbackgroundapp;
 
-public class Operation {
-    public final int id;
-    public final String content;
-//    public final String details;
-
-    public Operation(int id, String content) {
-        this.id = id;
-        this.content = content;
-//        this.details = details;
+public class Operation extends OperationOption {
+    private static int idValue = 0;
+    public Operation(OperationOption operation) {
+        super(operation);
+        idValue++;
+        setId(idValue);
     }
 
-    @Override
-    public String toString() {
-        return content;
-    }
+//    private final int id;
+//    private long durationTime;
+//    private String timeOption;
+//    private static int idValue = 0;
+//
+//
+//    public Operation(long durationTime) {
+//        idValue++;
+//        id = idValue;
+//        this.durationTime = durationTime;
+//        timeOption = durationTime + " sekund";
+//    }
+//
+//    public int getId() {
+//        return id;
+//    }
+//
+//    public long getDurationTime() {
+//        return durationTime;
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return timeOption;
+//    }
 }
 

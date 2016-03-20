@@ -4,73 +4,64 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 
-import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Operation} and makes a call to the
-// * specified {@link .
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyOperationRecyclerViewAdapter extends RecyclerView.Adapter<MyOperationRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Operation> mValues;
-    private final SecondScreenFragment.OnListFragmentInteractionListener mListener;
+    private final ArrayList<Operation> startedOperationList;
+    ViewHolder holder;
 
-    public MyOperationRecyclerViewAdapter(List<Operation> items, SecondScreenFragment.OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public MyOperationRecyclerViewAdapter(ArrayList<Operation> operations) {
+        startedOperationList = operations;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_operation, parent, false);
-        return new ViewHolder(view);
+                .inflate(R.layout.running_operation, parent, false);
+        holder = new ViewHolder(view);
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId());
-        long durationTime = mValues.get(position).getDurationTime();
-        holder.mDurationTimeView.setText(String.valueOf(durationTime));
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
-            }
-        });
+        Operation operation = startedOperationList.get(position);
+        holder.operation = operation;
+        String progressInfo = operation.toString();
+        holder.progressInfo.setText(progressInfo);
+        holder.progressBar.setProgress(0);
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return startedOperationList.size();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mDurationTimeView;
-        public Operation mItem;
+        public final TextView progressInfo;
+        public final ProgressBar progressBar;
+        public Operation operation;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mDurationTimeView = (TextView) view.findViewById(R.id.content);
+            progressInfo = (TextView) view.findViewById(R.id.progressTextViewID);
+            progressBar = (ProgressBar) view.findViewById(R.id.progressBarID);
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setMax(100);
+
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mDurationTimeView.getText() + "'";
-        }
     }
 }

@@ -11,5 +11,7 @@
         <item>25 sekund</item>
         <item>Zdefiniuj własny czas...</item>
     </string-array>
+    <string name="progressBarText">Ładowanie...</string>
+    <string name="detailsButtonText">Więcej...</string>
     <string name="startButtonText">Start</string>
 </resources>

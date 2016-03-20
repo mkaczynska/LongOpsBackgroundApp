@@ -1,11 +1,7 @@
 package com.blstream.kaczynska.longopsbackgroundapp;
 
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,51 +15,47 @@ import java.util.ArrayList;
 public class FirstScreenFragment extends Fragment {
 
     private OperationOption selectedOption;
-    private ArrayList<Operation> listOfStartedOperations;
+    private ArrayList<Operation> startedOperationList;
     private ArrayList<OperationOption> operationOptionList;
-    public OperationService operationService;
-    private boolean serviceStatus;
     private Context context;
-    final static int[] operationTimeArray = new int[]{10, 15, 20, 25};
+    private OnGetDetailsButtonPressedListener onGetDetailsCallback;
+    private OnOperationStartButtonPressedListener OnOperationStartCallback;
+    final static int[] operationTimeArray = new int[]{10, 15, 20, 25, 1000};
+
+
+    public interface OnGetDetailsButtonPressedListener {
+        void OnGetDetailsButtonPressed(ArrayList<Operation> startedOperationList);
+    }
+    public interface OnOperationStartButtonPressedListener {
+        void OnOperationStartButtonPressed(Operation operation);
+    }
+
 
     public FirstScreenFragment() {
-        operationOptionList = new ArrayList<>();
-        listOfStartedOperations = new ArrayList<>();
-        for(int i=0; i<operationTimeArray.length; i++) {
-            operationOptionList.add(new OperationOption(operationTimeArray[i]));
-        }
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Bind to LocalService
-//        if (!serviceStatus) {
-            Intent intent = new Intent(context, OperationService.class);
-            context.bindService(intent, workingOperation, Context.BIND_AUTO_CREATE);
-            serviceStatus = true;
-//        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Unbind from the service
-        if (serviceStatus) {
-            context.unbindService(workingOperation);
-        }
-    }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("startedOperationList", startedOperationList);
+//        layoutManager = recyclerView.getLayoutManager();
+//        outState.putParcelable("layoutManagerState", layoutManager.onSaveInstanceState());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
+        if(savedInstanceState != null) {
+            startedOperationList = savedInstanceState.getParcelableArrayList("startedOperationList");
+        }
+        else {
+            operationOptionList = new ArrayList<>();
+            startedOperationList = new ArrayList<>();
+            for (int i = 0; i < operationTimeArray.length; i++) {
+                operationOptionList.add(new OperationOption(operationTimeArray[i]));
+            }
+        }
     }
 
 
@@ -83,10 +75,6 @@ public class FirstScreenFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedOption = (OperationOption) parentView.getItemAtPosition(position);
-                Operation startedOperation = new Operation(selectedOption);
-                listOfStartedOperations.add(startedOperation);
-
-//                Toast.makeText(parentView.getContext(), "Selected operation is  " + selectedOption.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -96,39 +84,56 @@ public class FirstScreenFragment extends Fragment {
 
         spinner.setAdapter(operationTimeAdapter);
 
-        Button startButton = (Button) view.findViewById(R.id.buttonStartId);
-        startButton.setOnClickListener(new Button.OnClickListener() {
+
+        Button startOperationButton = (Button) view.findViewById(R.id.buttonStartOperationId);
+        startOperationButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OperationOption selectedOperation = (OperationOption) spinner.getSelectedItem();
-//                String spinnerString = selectedOperation.toString();
-//                int nPos = spinner.getSelectedItemPosition();
-//                Toast.makeText(context, "getSelectedItem=" + spinnerString,
-//                        Toast.LENGTH_SHORT).show();
-//                Toast.makeText(context, "getSelectedItemPosition=" + nPos,
-//                        Toast.LENGTH_SHORT).show();
-                operationService.countTime(selectedOption.getDurationTime());
+                if (selectedOption != null) {
+                    Operation startedOperation = new Operation(selectedOption);
+                    startedOperationList.add(startedOperation);
+                    OnOperationStartCallback.OnOperationStartButtonPressed(startedOperation);
+                }
             }
         });
+
+
+        Button operationDetailsButton = (Button) view.findViewById(R.id.buttonGetDetailsId);
+        operationDetailsButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onGetDetailsCallback.OnGetDetailsButtonPressed(startedOperationList);
+            }
+        });
+
+
         return view;
     }
-    /**
-     * Defines callbacks for service binding, passed to bindService()
-     */
-    ServiceConnection workingOperation = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            OperationService.LocalBinder binder = (OperationService.LocalBinder) service;
-            operationService = binder.getService();
-            serviceStatus = true;
-        }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            serviceStatus = false;
+        try {
+            onGetDetailsCallback = (OnGetDetailsButtonPressedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnGetDetailsButtonPressedListener");
         }
-    };
+        try {
+            OnOperationStartCallback = (OnOperationStartButtonPressedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnOperationStartButtonPressedListener");
+
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onGetDetailsCallback = null;
+        OnOperationStartCallback = null;
+    }
+
 }

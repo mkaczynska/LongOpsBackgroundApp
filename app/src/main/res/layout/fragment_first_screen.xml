@@ -12,15 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:prompt="@string/timePrompt"
+        android:layout_margin="@dimen/text_margin"
         />
     <Button
-        android:id="@+id/buttonStartId"
+        android:id="@+id/buttonStartOperationId"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/view_height"
         android:text="@string/startButtonText"
         android:layout_gravity="center"
+        android:layout_margin="@dimen/text_margin"
+        />
+
+    <Button
+        android:id="@+id/buttonGetDetailsId"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/view_height"
+        android:text="@string/detailsButtonText"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/text_margin"
         />
 
 </LinearLayout>
-
-<!--//        android:onClick="startOperationService"-->

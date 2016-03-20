@@ -8,6 +8,8 @@ public class OperationOption {
     private String timeOption;
     private static int idValue = 0;
 
+    public OperationOption() {
+    }
 
     public OperationOption(long durationTime) {
         idValue++;
@@ -37,5 +39,13 @@ public class OperationOption {
     @Override
     public String toString() {
         return timeOption;
+    }
+
+    public void setDurationTime(long durationTime) {
+        this.durationTime = durationTime;
+    }
+
+    public void setTimeOption(String timeOption) {
+        this.timeOption = timeOption;
     }
 }
